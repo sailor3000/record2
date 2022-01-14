@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>记录美化</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+<link rel="stylesheet" type="text/css" href="recordDependence/xui.css">
+<style>
+   .form-group{
+       width: 80%;
+       margin: 0 auto;
+       /* display: flex; */
+       padding-top: 50px;
+   } 
+   .form-control {
+       margin-top: 20px;
+       height: 300px;
+   }
+   .go {
+       border: 1px solid #21293B;
+       border-radius: 8px;
+       display: inline-block;
+       padding: 7px 15px;
+       color: #fff;
+       background-color: #21293B;
+       margin: 0 auto;
+       cursor: pointer;
+   }
+   .center {
+       margin: 0 auto;
+       text-align: center;
+       margin-top: 10px;
+   }
+   .radio-item {
+       display: flex;
+       margin-bottom: 11px;
+   }
+   .radio-item div:first-child {
+       width: 370px;
+       text-align: right;
+       margin-right: 15px;
+   }
+   .cur-name {
+       display: flex;
+   }
+   .attr-show {
+       width: 80%;
+       margin: 0 auto;
+       display: none;
+   }
+   .radios {
+       display: none;
+   }
+   .font-input {
+       display: none;
+   }
+   .output {
+       height: 600px;
+       overflow-y: auto;
+   }
+   .banner {
+       width: 100%;
+   }
+   .banner img {
+       width: 100%;
+   }
+   #last-btn {
+       display: none;
+   }
+</style>
+<body>
+    <div class="banner">
+        <img src="recordDependence/banner.jpg" alt="" srcset="">
+    </div>
+    <div class="form-group">
+        <label for="exampleInputEmail1">输入戏录</label>
+        <div style="display: flex">
+            <textarea type="record" class="form-control" id="record" placeholder="快给我戏录——"></textarea>
+            <div style="width: 20%; margin-left: 20px">
+                1.为保持记录同步，首先建议将qq的戏群群聊记录备份至电脑。手机qq-设置-通用-聊天记录设置-迁移聊天记录到另一台电脑。按照步骤指引备份至电脑即可。<br><br>
+                2.备份完成后，通过电脑qq，主菜单-消息管理中，找到对应群聊，右键-导出消息记录，保存类型为【文本文件(*. txt,不支持导入)】<br><br>
+                3.得到聊天记录的txt文件后，打开文件，ctrl+A全选，ctrl+C复制。然后打开本网页，将复制的文字粘贴至文本框中，按照步骤和按钮指引操作即可（不建议给qq昵称为空的人的聊天记录上色，会报错，这问题会在稍后版本更新时完善）
+            </div>
+        </div>
+        
+        <div class="center">
+            <div class="go" id="slice-str">开始整理!</div>
+        </div>
+        <!-- <div>
+            <img src="recordDependence/ad1.jpg" alt="ad1">
+        </div> -->
+    </div>
+    <div class="attr-show">
+        <div style="margin-right: 10px">
+            <div class="radio-item">
+                <div>是否显示时间</div>
+                <div>
+                    <span class="xradio xblack2"><label><input type="radio" name="showTime" value="0" checked><em></em><span>不显示</span></label></span>
+                    <span class="xradio xblack2"><label><input type="radio" name="showTime" value="1"><em></em><span>显示</span></label></span>
+                </div>
+            </div>
+            <div class="radio-item">
+                <div>是否显示qq号</div>
+                <div>
+                    <span class="xradio xblack2"><label><input type="radio" name="showQQ" value="0" checked><em></em><span>不显示</span></label></span>
+                    <span class="xradio xblack2"><label><input type="radio" name="showQQ" value="1"><em></em><span>显示</span></label></span>
+                </div>
+            </div>
+        </div>
+    <div class="radios">
+    </div>
+    <div class="font-input radio-item">
+        <div>字号</div>
+        <input type="text" name="font" class="xinput" placeholder="请输入记录字号，如：16">
+    </div>
+    <div class="center">
+        <div class="go go-color">开始上色!</div>
+    </div>
+    <div class="center" id="last-btn">
+        <div class="go zclip" id="copy">全选全部</div>
+        <div class="go" id="word">导出成word文档</div>
+    </div>
+    <div class="output">
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script type="text/javascript" src="recordDependence/jquery.zeroclipboard.js.js"></script>
+<script type="text/javascript" src="recordDependence/FileSaver.js"></script>
+<script type="text/javascript" src="recordDependence/jQuery-Word-Export.js"></script>
+<script type="text/javascript">
+$(function(){
+    $("#slice-str").on('click', function(){
+        getItem()
+        $(".radios").css("display", "block")
+        $(".attr-show").css("display", "block")
+        $(".font-input").css("display", "flex")
+    })
+
+    var items = [] // 分段的
+    var itemsJson = [] // 分段的json数组-带颜色
+    var people = [] // 所有人的数组和颜色 json
+
+    // 获取每个人发的话为json数组元素
+    function getItem(){
+        var val = $("#record").val()
+        var data = []
+        for(var k = 0; k < val.length; k++) {
+            var nane = val.indexOf("2021-",k); // 从0开始搜索
+            var nane2022 = val.indexOf("2022-",k); // 从0开始搜索
+            if(nane === -1){ // 没有找到，退出循环
+            break;
+            } else {
+                data.push(nane);
+                k+=1;
+            }
+        }
+        data = unique(data)
+        for(var j = 0; j < data.length; j++) {
+            let t
+            if (j === data.length - 1){
+                t = val.slice(data[j])
+            } else {
+                t = val.slice(data[j], data[j+1]-1)
+            }
+            items.push(t)
+            var tinfo = t.slice(0, t.indexOf("\n", 0))
+            var time = tinfo.slice(0, tinfo.indexOf(" ", tinfo.indexOf(" ")+1))
+            var person = tinfo.indexOf("(") !== -1 ? tinfo.slice(tinfo.indexOf(" ", tinfo.indexOf(" ")+1)+1, tinfo.indexOf("(")) : tinfo.slice(tinfo.indexOf(" ", tinfo.indexOf(" ")+1)+1, tinfo.indexOf("<"))
+            var qqNumber = tinfo.indexOf("(") === -1 ? tinfo.slice(tinfo.indexOf("<") + 1, tinfo.indexOf(">")) : tinfo.slice(tinfo.indexOf("(") + 1, tinfo.indexOf(")"))
+            var play = t.slice(t.indexOf("\n")+1)
+            play = play.replace(/\n/g,'<br/>')
+            itemsJson.push({
+                time: time,
+                person: person,
+                qqNumber: qqNumber,
+                play: play,
+                color: '#000',
+            })
+            people.push({
+                person: person,
+                color: '#000',
+            }) 
+        }
+        setColor()
+    }
+
+    // 生成选择颜色单选框
+    function setColor() {
+        // 人物去重
+        for(var i = 0;i < people.length; i++){
+            for(var j = people.length - 1; j > 0; j--){
+                if( people[i].person === people[j].person && i != j){
+                    people.splice(j, 1);
+                }
+            }
+        }
+        console.log('去重后', people)
+        // 生成单选项
+        let radioCode = ''
+        people.forEach((per) => {
+            radioCode = `${radioCode}<div class="radio-item"><div>${per.person}</div><div><span class="xradio xblack2"><label><input type="radio" checked name="${per.person}" value="#000" /><em></em><span>黑色</span></label></span>
+                <span class="xradio xblack2"><label><input type="radio" name="${per.person}" value="#C00000" /><em></em><span>红色</span></label></span>
+                <span class="xradio xblack2"><label><input type="radio" name="${per.person}" value="#054AB1" /><em></em><span>蓝色</span></label></span>
+                <span class="xradio xblack2"><label><input type="radio" name="${per.person}" value="#F88A28" /><em></em><span>橙色</span></label></span>
+                <span class="xradio xblack2"><label><input type="radio" name="${per.person}" value="#345D1D" /><em></em><span>深绿</span></label></span>
+                <span class="xradio xblack2"><label><input type="radio" name="${per.person}" value="-1" /><em></em><span>其他</span><input type="text" name="${per.person}2" class="xinput" placeholder="请输入16进制色值，如：#ff0000"/></label></span></div></div>`
+        })
+        $(".radios").empty()
+        $(".radios").append(radioCode)
+    }
+
+    $(".go-color").on('click', function(){
+        $("#last-btn").css("display", "block")
+        console.log($("input[name=font]").val())
+        const fontNumber = $("input[name=font]").val() ? $("input[name=font]").val() : 16
+        $(".output").css({
+            "font-size": `${fontNumber}px`
+        })
+        output()
+    })
+
+    // 输出最终结果
+    function output() {
+        itemsJson.forEach((cur) => {
+            const colorChoose = $("input[name='"+cur.person+"']:checked").val()
+            if (colorChoose == -1) {
+                cur.color = $("input[name='"+cur.person+"2']").val()
+                console.log($("input[name='"+cur.person+"2']").val())
+            } else {
+                cur.color = $("input[name='"+cur.person+"']:checked").val()
+            }
+        })
+        console.log('上色', itemsJson)
+        $(".output").empty()
+        let ti = $("input[name='showTime']:checked").val()
+        let qq = $("input[name='showQQ']:checked").val()
+        let curCode
+        itemsJson.forEach((cur) => {
+            if (ti == 1 && qq == 1) {
+                curCode = `<div class="cur" style="color: ${cur.color}"><div class="cur-name"><div>&lt;${cur.person}&gt;</div><div>(${cur.qqNumber})</div><div>${cur.time}</div></div><div>${cur.play}</div></div><br/><br/>`
+            } else if (ti == 0 && qq == 0) {
+                curCode = `<div class="cur" style="color: ${cur.color}"><div class="cur-name"><div>&lt;${cur.person}&gt;</div></div><div>${cur.play}</div></div><br/><br/>`
+            } else if (ti == 1 && qq == 0) {
+                curCode = `<div class="cur" style="color: ${cur.color}"><div class="cur-name"><div>&lt;${cur.person}&gt;</div><div>${cur.time}</div></div><div>${cur.play}</div></div><br/><br/>`
+            } else {
+                curCode = `<div class="cur" style="color: ${cur.color}"><div class="cur-name"><div>&lt;${cur.person}&gt;</div><div>(${cur.qqNumber})</div></div><div>${cur.play}</div></div><br/><br/>`
+            }
+            $(".output").append(curCode)
+        })
+    }
+
+    // 复制全部
+    //复制按钮事件绑定
+    $("#copy").on('click', function (){
+        $(".output").trigger('click')
+    })
+
+    // 复制全部
+    $(".output").on("click", function(){
+        var text=this;
+        if (document.body.createTextRange) {
+            // debugger
+            var range = document.body.createTextRange();
+            range.moveToElementText(text);
+            range.select();
+        } else if (window.getSelection) {
+            // debugger
+            var selection = window.getSelection();
+            var range = document.createRange();
+            range.selectNodeContents(text);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            
+        } else {
+            alert("none");
+        }
+                         
+    })
+
+    $("#word").on('click', function(){
+        $(".output").wordExport();
+        debugger
+    })
+
+    // 数组去重
+    function unique (arr) {
+        return Array.from(new Set(arr))
+    }
+})
+</script>

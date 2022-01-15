@@ -15,6 +15,12 @@
        /* display: flex; */
        padding-top: 50px;
    } 
+   .sanqian {
+       margin-bottom: 10px;
+       color: red;
+       font-size: 14px;
+       font-weight: bold;
+   }
    .form-control {
        margin-top: 20px;
        height: 300px;
@@ -76,6 +82,7 @@
         <img src="recordDependence/banner.jpg" alt="" srcset="">
     </div>
     <div class="form-group">
+        <div class="sanqian">如有bug或错误，请发邮件到this.sanqian.map@qq.com，并附上出现问题的记录（txt格式），简单描述你的问题即可。</div>
         <label for="exampleInputEmail1">输入戏录</label>
         <div style="display: flex">
             <textarea type="record" class="form-control" id="record" placeholder="快给我戏录——"></textarea>
@@ -150,12 +157,16 @@ $(function(){
         var val = $("#record").val()
         var data = []
         for(var k = 0; k < val.length; k++) {
+            var nane2020 = val.indexOf("2020-",k); // 从0开始搜索
             var nane = val.indexOf("2021-",k); // 从0开始搜索
             var nane2022 = val.indexOf("2022-",k); // 从0开始搜索
-            if(nane === -1){ // 没有找到，退出循环
+            if(nane === -1 && nane2022 === -1 && nane2020){ // 没有找到，退出循环
+                // debugger
             break;
             } else {
-                data.push(nane);
+                // debugger
+                const txt = nane === -1 ? (nane2020 === -1 ? nane2022 : nane2020) : nane
+                data.push(txt);
                 k+=1;
             }
         }

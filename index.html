@@ -9,6 +9,9 @@
 </head>
 <link rel="stylesheet" type="text/css" href="recordDependence/xui.css">
 <style>
+    html{
+        padding-bottom: 200px;
+    }
    .form-group{
        width: 80%;
        margin: 0 auto;
@@ -96,6 +99,12 @@
         <div class="center">
             <div class="go" id="slice-str">开始整理!</div>
         </div>
+        <div class="center">
+            <input type="text" placeholder="请输入qq号" id="qq">
+            <div class="go" id="words">统计个人戏录字数!</div>
+        </div>
+        <div class="result">
+        </div>
         <!-- <div>
             <img src="recordDependence/ad1.jpg" alt="ad1">
         </div> -->
@@ -154,6 +163,7 @@ $(function(){
 
     // 获取每个人发的话为json数组元素
     function getItem(){
+        itemsJson = [] 
         var val = $("#record").val()
         var data = []
         for(var k = 0; k < val.length; k++) {
@@ -295,12 +305,46 @@ $(function(){
 
     $("#word").on('click', function(){
         $(".output").wordExport();
-        debugger
+        // debugger
     })
 
     // 数组去重
     function unique (arr) {
         return Array.from(new Set(arr))
+    }
+
+    // 点击统计字数
+    $("#words").on('click', function(){
+        getItem()
+        let qq = $("#qq").val()
+        // console.log(itemsJson)
+        // let sum = $.extend([], itemsJson)
+        let newSum = []
+        // console.log(sum)
+        itemsJson.forEach((li,index) => {
+            if(li.qqNumber == qq){
+                newSum.push(li)
+            }
+        })
+        // debugger
+        var reg = new RegExp("<br/>", 'g');
+        let strLens = 0
+        newSum.forEach((li)=>{
+            li.clear = li.play.replace(reg, '')
+            strLens = strLens + lens(li.clear)
+        })
+        debugger
+        $(".result").empty()
+        $(".result").append('<div>总字数为：'+ strLens/2 +'(包含标点符号，标点符号算半个字)</div>')
+        console.log('newSum', strLens)
+    })
+
+    function lens(str) {
+        if (str == null) return 0;
+        if (typeof str != "string"){
+            str += "";
+        }
+        return str.replace(/[^\x00-\xff]/g,"ab").length;
     }
 })
 </script>
